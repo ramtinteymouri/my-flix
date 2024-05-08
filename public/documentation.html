@@ -64,6 +64,78 @@
     <h2>Project Deliverables</h2>
     <p>The myFlix API will be developed incrementally through a series of exercises, each contributing to the final product. The documentation for each exercise will ensure high-quality deliverables for incorporation into a professional portfolio.</p>
 
-    <p>For more details on the project structure and deliverables, refer to the documentation provided in the following pages.</p>
+    <h2>Endpoints</h2>
+    <table border="1" cellspacing="0" cellpadding="5">
+        <tr>
+            <th>Business Logic</th>
+            <th>URL</th>
+            <th>HTTP Method</th>
+            <th>Request</th>
+            <th>Response</th>
+        </tr>
+        <tr>
+            <td>Create/Add new user</td>
+            <td>/users</td>
+            <td>POST</td>
+            <td>{"name": "John Doe"}</td>
+            <td>{"id": "1", "name": "John Doe"}</td>
+        </tr>
+        <tr>
+            <td>Update user name with id</td>
+            <td>/users/:id</td>
+            <td>PUT</td>
+            <td>{"name": "John Smith"}</td>
+            <td>{"id": "1", "name": "John Smith"}</td>
+        </tr>
+        <tr>
+            <td>Add movie to user's favorite list</td>
+            <td>/users/:id/:movieTitle</td>
+            <td>POST</td>
+            <td>N/A</td>
+            <td>The movie name: The Shawshank Redemption has been added to user's array with the id:1</td>
+        </tr>
+        <tr>
+            <td>Delete movie from user's favorite list</td>
+            <td>/users/:id/:movieTitle</td>
+            <td>DELETE</td>
+            <td>N/A</td>
+            <td>The movie name: The Shawshank Redemption has been removed from user's array with the id:1</td>
+        </tr>
+        <tr>
+            <td>Remove user</td>
+            <td>/users/:id</td>
+            <td>DELETE</td>
+            <td>N/A</td>
+            <td>User 1 has been deleted</td>
+        </tr>
+        <tr>
+            <td>Get list of all movies</td>
+            <td>/movies</td>
+            <td>GET</td>
+            <td>N/A</td>
+            <td>[{"Title": "The Shawshank Redemption", "Year": "1994"}, {"Title": "The Godfather", "Year": "1972"}, {"Title": "The Dark Knight", "Year": "2008"}]</td>
+        </tr>
+        <tr>
+            <td>Get movie by title</td>
+            <td>/movies/:title</td>
+            <td>GET</td>
+            <td>N/A</td>
+            <td>{"Title": "The Shawshank Redemption", "Year": "1994"}</td>
+        </tr>
+        <tr>
+            <td>Get genre by genre name</td>
+            <td>/movies/genre/:genreName</td>
+            <td>GET</td>
+            <td>N/A</td>
+            <td>{"Name": "Drama", "Description": "A genre focused on serious storytelling and character development."}</td>
+        </tr>
+        <tr>
+            <td>Get director data by director name</td>
+            <td>/movies/directors/:directorName</td>
+            <td>GET</td>
+            <td>N/A</td>
+            <td>{"Name": "Frank Darabont", "Bio": "Frank Darabont is a Hungarian-American film director, screenwriter, and producer.", "Birth": "1959"}</td>
+        </tr>
+    </table>
 </body>
 </html>
