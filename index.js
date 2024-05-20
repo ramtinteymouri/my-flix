@@ -3,7 +3,7 @@ const Models = require('./models.js');
 
 const Movies = Models.Movie;
 const Users = Models.User;
-mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/cfDB');
 
 const express = require('express'),
     app = express(),
@@ -11,67 +11,6 @@ const express = require('express'),
     uuid = require('uuid');
 
 app.use(bodyParser.json());
-
-let users = [
-    {
-        id: 1,
-        name: "Max",
-        favoriteMovies: []
-    },
-    {
-        id: 2,
-        name: "John",
-        favoriteMovies: ["The Godfather"]
-    }
-];
-
-let movies = [
-    {
-        Title: 'The Shawshank Redemption',
-        Description: 'Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.',
-        Genre: {
-            Name: 'Drama',
-            Description: 'A genre that explores serious themes and often focuses on emotional conflict.'
-        },
-        Director: {
-            Name: 'Frank Darabont',
-            Bio: 'Frank Darabont is a Hungarian-American film director, screenwriter, and producer.',
-            Birth: 'January 28, 1959'
-        },
-        ImageURL: 'https://example.com/shawshank_redemption.jpg',
-        Featured: false
-    },
-    {
-        Title: 'The Godfather',
-        Description: "An organized crime dynasty's aging patriarch transfers control of his clandestine empire to his reluctant son.",
-        Genre: {
-            Name: 'Crime',
-            Description: 'A genre that revolves around criminal activities and often involves law enforcement.'
-        },
-        Director: {
-            Name: 'Francis Ford Coppola',
-            Bio: 'Francis Ford Coppola is an American film director, producer, and screenwriter.',
-            Birth: 'April 7, 1939'
-        },
-        ImageURL: 'https://example.com/godfather.jpg',
-        Featured: false
-    },
-    {
-        Title: 'The Dark Knight',
-        Description: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.',
-        Genre: {
-            Name: 'Action',
-            Description: 'A genre characterized by fast-paced sequences, violence, and heroic protagonists.'
-        },
-        Director: {
-            Name: 'Christopher Nolan',
-            Bio: 'Christopher Nolan is a British-American film director, producer, and screenwriter.',
-            Birth: 'July 30, 1970'
-        },
-        ImageURL: 'https://example.com/dark_knight.jpg',
-        Featured: false
-    }
-];
 
 // Creates/Adds new user
 
