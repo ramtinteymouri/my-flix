@@ -8,9 +8,10 @@ mongoose.connect('mongodb://localhost:27017/cfDB');
 const express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
-    uuid = require('uuid');
-
+    passport = require('passport');
+require('./passport');
 app.use(bodyParser.json());
+let auth = require('./auth')(app);
 
 // Creates/Adds new user
 
@@ -54,7 +55,7 @@ app.post('/users', async (req, res) => {
 });
 
 // Get all users
-app.get('/users', async (req, res) => {
+app.get('/users', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.find()
         .then((users) => {
             res.status(201).json(users);
@@ -66,7 +67,7 @@ app.get('/users', async (req, res) => {
 });
 
 // Get a user by username
-app.get('/users/:username', async (req, res) => {
+app.get('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOne({ username: req.params.username })
         .then((user) => {
             res.json(user);
@@ -87,7 +88,12 @@ app.get('/users/:username', async (req, res) => {
   email: String, (required)
   birthday: Date
 }*/
-app.put('/users/:username', async (req, res) => {
+app.put('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    // CONDITION TO CHECK ADDED HERE
+    if (req.user.username !== req.params.username) {
+        return res.status(400).send('Permission denied');
+    }
+    // CONDITION ENDS
     await Users.findOneAndUpdate({ username: req.params.username }, {
         $set:
         {
@@ -111,7 +117,7 @@ app.put('/users/:username', async (req, res) => {
 });
 
 // Add a movie to a user's list of favorites
-app.post('/users/:username/movies/:movieID', async (req, res) => {
+app.post('/users/:username/movies/:movieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndUpdate({ username: req.params.username }, {
         $push: { favorite_movies: req.params.movieID }
     },
@@ -126,7 +132,7 @@ app.post('/users/:username/movies/:movieID', async (req, res) => {
 });
 
 // Remove a movie from a user's list of favorites
-app.delete('/users/:username/movies/:movieID', async (req, res) => {
+app.delete('/users/:username/movies/:movieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndUpdate({ username: req.params.username }, {
         $pull: { favorite_movies: req.params.movieID }
     },
@@ -141,7 +147,7 @@ app.delete('/users/:username/movies/:movieID', async (req, res) => {
 });
 
 // Delete a user by username
-app.delete('/users/:username', async (req, res) => {
+app.delete('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOneAndDelete({ username: req.params.username })
         .then((user) => {
             if (!user) {
@@ -158,7 +164,7 @@ app.delete('/users/:username', async (req, res) => {
 
 
 // Get all movies
-app.get('/movies', async (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Movies.find()
         .then((movies) => {
             res.status(201).json(movies);
