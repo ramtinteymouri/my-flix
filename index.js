@@ -1,6 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const Models = require('./models.js');
+const path = require('path');
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -28,6 +29,10 @@ app.use(cors({
     }
 }));
 let auth = require('./auth')(app);
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'documentation.html'));  // Serve documentation.html
+});
 
 // Creates/Adds new user
 
