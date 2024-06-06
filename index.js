@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const Models = require('./models.js');
 const path = require('path');
 
-const Movies = Models.Movie;
-const Users = Models.User;
+const movies = Models.Movie;
+const users = Models.User;
 //mongoose.connect('mongodb://localhost:27017/cfDB');
 mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -16,19 +16,19 @@ require('./passport');
 const { check, validationResult } = require('express-validator');
 app.use(bodyParser.json());
 const cors = require('cors');
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+const allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
 
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) === -1) { // If a specific origin isn’t found on the list of allowed origins
-            let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
+            const message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
             return callback(new Error(message), false);
         }
         return callback(null, true);
     }
 }));
-let auth = require('./auth')(app);
+const auth = require('./auth')(app);
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'documentation.html'));  // Serve documentation.html
@@ -40,8 +40,8 @@ app.get('/', (req, res) => {
 /* We’ll expect JSON in this format
 {
   id: Integer,
-  first_name: String,
-  last_name: String,
+  firstName: String,
+  lastName: String,
   username: String,
   password: String,
   email: String,
@@ -56,21 +56,21 @@ app.post('/users',
     ], async (req, res) => {
 
         // check the validation object for errors
-        let errors = validationResult(req);
+        const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
         }
-        let hashedPassword = Users.hashPassword(req.body.password);
-        await Users.findOne({ username: req.body.username })
+        const hashedPassword = users.hashPassword(req.body.password);
+        await users.findOne({ username: req.body.username })
             .then((user) => {
                 if (user) {
                     return res.status(400).send(req.body.username + ' already exists');
                 } else {
-                    Users
+                    users
                         .create({
-                            first_name: req.body.first_name,
-                            last_name: req.body.last_name,
+                            firstName: req.body.firstName,
+                            lastName: req.body.lastName,
                             username: req.body.username,
                             password: hashedPassword,
                             email: req.body.email,
@@ -91,7 +91,7 @@ app.post('/users',
 
 // Get all users
 app.get('/users', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Users.find()
+    await users.find()
         .then((users) => {
             res.status(201).json(users);
         })
@@ -103,7 +103,7 @@ app.get('/users', passport.authenticate('jwt', { session: false }), async (req, 
 
 // Get a user by username
 app.get('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Users.findOne({ username: req.params.username })
+    await users.findOne({ username: req.params.username })
         .then((user) => {
             res.json(user);
         })
@@ -116,8 +116,8 @@ app.get('/users/:username', passport.authenticate('jwt', { session: false }), as
 // Update a user's info, by username
 /* We’ll expect JSON in this format
 {
-  first_name: String,
-  last_name: String,
+  firstName: String,
+  lastName: String,
   username: String, (required)
   password: String, (required)
   email: String, (required)
@@ -129,7 +129,7 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), [
     check('password', 'Password is required').not().isEmpty(),
     check('email', 'Email does not appear to be valid').isEmail()
 ], async (req, res) => {
-    let errors = validationResult(req);
+    const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -138,13 +138,13 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), [
     if (req.user.username !== req.params.username) {
         return res.status(400).send('Permission denied');
     }
-    let hashedPassword = Users.hashPassword(req.body.password);
+    const hashedPassword = users.hashPassword(req.body.password);
     // CONDITION ENDS
-    await Users.findOneAndUpdate({ username: req.params.username }, {
+    await users.findOneAndUpdate({ username: req.params.username }, {
         $set:
         {
-            first_name: req.body.first_name,
-            last_name: req.body.last_name,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
             username: req.body.username,
             password: hashedPassword,
             email: req.body.email,
@@ -164,8 +164,8 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), [
 
 // Add a movie to a user's list of favorites
 app.post('/users/:username/movies/:movieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Users.findOneAndUpdate({ username: req.params.username }, {
-        $push: { favorite_movies: req.params.movieID }
+    await users.findOneAndUpdate({ username: req.params.username }, {
+        $push: { favoriteMovies: req.params.movieID }
     },
         { new: true }) // This line makes sure that the updated document is returned
         .then((updatedUser) => {
@@ -179,8 +179,8 @@ app.post('/users/:username/movies/:movieID', passport.authenticate('jwt', { sess
 
 // Remove a movie from a user's list of favorites
 app.delete('/users/:username/movies/:movieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Users.findOneAndUpdate({ username: req.params.username }, {
-        $pull: { favorite_movies: req.params.movieID }
+    await users.findOneAndUpdate({ username: req.params.username }, {
+        $pull: { favoriteMovies: req.params.movieID }
     },
         { new: true }) // This line makes sure that the updated document is returned
         .then((updatedUser) => {
@@ -194,7 +194,7 @@ app.delete('/users/:username/movies/:movieID', passport.authenticate('jwt', { se
 
 // Delete a user by username
 app.delete('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Users.findOneAndDelete({ username: req.params.username })
+    await users.findOneAndDelete({ username: req.params.username })
         .then((user) => {
             if (!user) {
                 res.status(400).send(req.params.username + ' was not found');
@@ -211,7 +211,7 @@ app.delete('/users/:username', passport.authenticate('jwt', { session: false }),
 
 // Get all movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Movies.find()
+    await movies.find()
         .then((movies) => {
             res.status(201).json(movies);
         })
@@ -223,7 +223,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
 
 // Get a movie info by title
 app.get('/movies/:title', async (req, res) => {
-    await Movies.findOne({ title: req.params.title })
+    await movies.findOne({ title: req.params.title })
         .then((movie) => {
             res.json(movie);
         })
@@ -236,7 +236,7 @@ app.get('/movies/:title', async (req, res) => {
 // Gets the Genre by genre name
 
 app.get('/movies/genre/:genreName', async (req, res) => {
-    await Movies.findOne({ 'genre.name': req.params.genreName })
+    await movies.findOne({ 'genre.name': req.params.genreName })
         .then((movie) => {
             res.json(movie.genre);
         })
@@ -249,7 +249,7 @@ app.get('/movies/genre/:genreName', async (req, res) => {
 // Gets the Director data by director name
 
 app.get('/movies/directors/:directorName', async (req, res) => {
-    await Movies.findOne({ 'director.name': req.params.directorName })
+    await movies.findOne({ 'director.name': req.params.directorName })
         .then((movie) => {
             res.json(movie.director);
         })
