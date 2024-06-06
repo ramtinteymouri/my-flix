@@ -14,7 +14,7 @@ passport.use(
             passwordField: 'password',
         },
         async (username, password, callback) => {
-            console.log(`${username} ${password}`);
+            console.log(`${username}`);
             await Users.findOne({ username: username })
                 .then((user) => {
                     if (!user) {
@@ -32,7 +32,7 @@ passport.use(
                 })
                 .catch((error) => {
                     if (error) {
-                        console.log(error);
+                        console.error(error);
                         return callback(error);
                     }
                 })
