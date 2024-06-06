@@ -138,6 +138,7 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), [
     if (req.user.username !== req.params.username) {
         return res.status(400).send('Permission denied');
     }
+    let hashedPassword = Users.hashPassword(req.body.password);
     // CONDITION ENDS
     await Users.findOneAndUpdate({ username: req.params.username }, {
         $set:
@@ -145,7 +146,7 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), [
             first_name: req.body.first_name,
             last_name: req.body.last_name,
             username: req.body.username,
-            password: req.body.password,
+            password: hashedPassword,
             email: req.body.email,
             birthday: req.body.birthday
         }
