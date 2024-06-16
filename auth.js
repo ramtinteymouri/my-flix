@@ -29,6 +29,7 @@ module.exports = (router) => {
                     res.send(error);
                 }
                 const token = generateJwtToken(user.toJSON());
+                console.log(user, token)
                 return res.json({ user, token });
             });
         })(req, res);
