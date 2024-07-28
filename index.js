@@ -16,7 +16,7 @@ require('./passport');
 const { check, validationResult } = require('express-validator');
 app.use(bodyParser.json());
 const cors = require('cors');
-const allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234'];
+const allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'https://myflix-movies-ramtin.netlify.app'];
 
 app.use(cors({
     origin: (origin, callback) => {
